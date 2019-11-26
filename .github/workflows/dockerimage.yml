@@ -1,14 +1,26 @@
 name: Docker Image CI
 
-on: [push]
+on:
+  push:
+    tags:
+      - v*
 
 jobs:
-
-  build:
-
+  build_and_push_image:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
+    - name: Get the tag
+      id: get_tag
+      run: echo ::set-output name=TAG::$(echo ${GITHUB_REF} | cut -d / -f 3)
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag xuyuanp/jupyter-server:${{ github.ref }}
+      run: |
+          docker build . --file Dockerfile --tag xuyuanp/jupyter-server:${{ steps.get_tag.outputs.TAG }}
+          docker tag xuyuanp/jupyter-server:${{ steps.get_tag.outputs.TAG }} xuyuanp/jupyter-server:latest
+    - name: Login Docker registry
+      run: echo -n ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+    - name: Push Image
+      run: |
+          docker push xuyuanp/jupyter-server:${{ steps.get_tag.outputs.TAG }}
+          docker push xuyuanp/jupyter-server:latest
