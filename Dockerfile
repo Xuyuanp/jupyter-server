@@ -2,9 +2,7 @@ FROM debian:latest
 
 LABEL maintainer='xuyuanp@gmail.com'
 
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
-        && sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list \
-        && apt-get update --fix-missing \
+RUN apt-get update --fix-missing \
         && apt-get install -q -y curl git wget procps g++ libpq-dev neovim \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
