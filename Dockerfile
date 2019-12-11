@@ -3,7 +3,7 @@ FROM debian:latest
 LABEL maintainer='xuyuanp@gmail.com'
 
 RUN apt-get update --fix-missing \
-        && apt-get install -q -y curl git wget procps g++ libpq-dev neovim bash-completion \
+        && apt-get install -q -y curl git wget procps g++ libpq-dev bash-completion \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
